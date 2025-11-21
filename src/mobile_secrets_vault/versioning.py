@@ -120,12 +120,15 @@ class VersionManager:
 
         if version is None:
             # Return latest version
-            return versions[-1]  # type: ignore[return-value]
+            last_version = versions[-1]
+            assert isinstance(last_version, SecretVersion)
+            return last_version
 
         # Find specific version
         for v in versions:
             if v.version == version:
-                return v  # type: ignore[return-value]
+                assert isinstance(v, SecretVersion)
+                return v
 
         return None
 

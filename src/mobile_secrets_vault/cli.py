@@ -212,7 +212,7 @@ def rotate(ctx: click.Context, new_key_file: Optional[str], yes: bool) -> None:
         new_key = vault.rotate()
 
         # Save new key if path provided
-        if new_key_file:
+        if new_key_file and new_key:
             output_path = Path(new_key_file)
             output_path.parent.mkdir(parents=True, exist_ok=True)
             with open(output_path, "wb") as f:
@@ -224,11 +224,13 @@ def rotate(ctx: click.Context, new_key_file: Optional[str], yes: bool) -> None:
                 pass
 
             click.echo(f"✅ Rotation complete! New key saved to: {output_path}")
-        else:
+        elif new_key:
             click.echo("✅ Rotation complete!")
             click.echo(f"\n🔑 New master key (base64):")
             click.echo(f"   {CryptoEngine.key_to_string(new_key)}")
             click.echo("\n⚠️  Save this key securely - you'll need it to access your secrets!")
+        else:
+            click.echo("✅ Rotation complete!")
 
     except MasterKeyNotFoundError as e:
         click.echo(f"❌ {e}", err=True)
