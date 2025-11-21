@@ -62,7 +62,7 @@ class VersionManager:
     - Audit trails
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the version manager."""
         # Storage format: {key: {versions: [SecretVersion, ...], current_version: int}}
         self._secrets: Dict[str, Dict[str, Any]] = {}
@@ -97,7 +97,7 @@ class VersionManager:
         self._secrets[key]["versions"].append(version)
         self._secrets[key]["current_version"] = next_version
 
-        return next_version
+        return int(next_version)
 
     def get_version(self, key: str, version: Optional[int] = None) -> Optional[SecretVersion]:
         """
@@ -120,12 +120,12 @@ class VersionManager:
 
         if version is None:
             # Return latest version
-            return versions[-1]
+            return versions[-1]  # type: ignore[return-value]
 
         # Find specific version
         for v in versions:
             if v.version == version:
-                return v
+                return v  # type: ignore[return-value]
 
         return None
 

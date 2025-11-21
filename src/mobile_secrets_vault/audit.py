@@ -126,6 +126,8 @@ class AuditLogger:
 
     def _load_logs(self) -> None:
         """Load existing logs from file."""
+        if self.log_file is None:
+            return
         try:
             with open(self.log_file, "r") as f:
                 self._memory_logs = [json.loads(line) for line in f if line.strip()]
@@ -135,6 +137,8 @@ class AuditLogger:
 
     def _append_to_file(self, log_entry: Dict[str, Any]) -> None:
         """Append a single log entry to the file."""
+        if self.log_file is None:
+            return
         try:
             self.log_file.parent.mkdir(parents=True, exist_ok=True)
             with open(self.log_file, "a") as f:

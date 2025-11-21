@@ -249,7 +249,7 @@ class MobileSecretsVault:
             self.audit_logger.log(Operation.DELETE, key=key, success=False, error=str(e))
             raise VaultError(f"Failed to delete secret: {e}")
 
-    def rotate(self, new_key: Optional[bytes] = None) -> None:
+    def rotate(self, new_key: Optional[bytes] = None) -> Optional[bytes]:
         """
         Rotate the master encryption key.
 
@@ -264,8 +264,10 @@ class MobileSecretsVault:
         """
         try:
             # Generate new key if not provided
+            generated_key = None
             if new_key is None:
                 new_key = self.crypto.generate_key()
+                generated_key = new_key
 
             # Re-encrypt all secrets
             old_key = self.master_key
@@ -284,7 +286,7 @@ class MobileSecretsVault:
                 secret_count=len(self.version_manager.get_all_keys()),
             )
 
-            return new_key if new_key else None
+            return generated_key
 
         except Exception as e:
             self.audit_logger.log(Operation.ROTATE, success=False, error=str(e))
